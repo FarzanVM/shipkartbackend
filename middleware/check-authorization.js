@@ -2,13 +2,14 @@ const jwt  = require('jsonwebtoken');
 
 const checkAuth = async(req,res,next)=>{
     try{
-        console.log("header",req.headers.authorization)
-        const token = req.headers.authorization.split(" ")[1];
-        console.log("token",token)
+        // console.log("header",req.headers.authorization)
+        //for req from postman
+        // const token = req.headers.authorization.split(" ")[1];
+        // console.log("token",token)
+        //for req from backend
+        const token = req.headers.authorization.substr(3)
         const decoded = jwt.verify(token,'secret');
-        console.log("decoded",decoded)
         req.userData = decoded;
-        console.log(req.userData)
         next();
     }
     catch(error){

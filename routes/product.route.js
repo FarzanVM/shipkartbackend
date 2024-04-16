@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/getproducts',checkAuth,getProducts);
 
-router.get('/getstoreproducts',checkAuth,getStoreProducts);
+router.post('/getstoreproducts',checkAuth,getStoreProducts);
 
 router.post('/addproduct',checkAuth,addProduct);
 
