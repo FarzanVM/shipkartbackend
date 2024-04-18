@@ -39,11 +39,11 @@ const getStoreProducts = async(req,res) =>{
 }
 const deleteProduct =  async(req,res) =>{
     try{
-        const product =  await Product.find({_id:req.body.id});
+        const product =  await Product.find({_id:req.params.id});
         if(!product.length){
             return res.status(500).json({message:"Product doesnt exist"})
         }
-        const deletedProduct =  await Product.deleteOne({_id:req.body.id});
+        const deletedProduct =  await Product.deleteOne({_id:req.params.id});
         res.status(200).json(deletedProduct)
     }
     catch(error){

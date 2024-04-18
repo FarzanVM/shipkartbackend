@@ -11,7 +11,7 @@ router.post('/getstoreproducts',checkAuth,getStoreProducts);
 
 router.post('/addproduct',checkAuth,addProduct);
 
-router.delete('/deleteproduct',checkAuth,deleteProduct);
+router.delete('/deleteproduct/:id',checkAuth,deleteProduct);
 
 router.put('/updateproduct',checkAuth,updateProduct);
 

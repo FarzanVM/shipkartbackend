@@ -9,7 +9,7 @@ const productRoute = require('./routes/product.route');
 app.use(cors())
 
 //to allow json data 
-app.use(express.json());
+app.use(express.json({limit:'10mb'}));
 //to allow from data
 app.use(express.urlencoded({extended:false}));
 
