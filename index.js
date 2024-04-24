@@ -5,6 +5,7 @@ const cors = require('cors')
 const userRoute = require('./routes/user.route');
 const adminRoute = require('./routes/admin.route');
 const productRoute = require('./routes/product.route');
+const cartRoute = require('./routes/cart.route')
 
 app.use(cors())
 
@@ -21,6 +22,7 @@ app.listen(3000,()=>{
 app.use('/api/user',userRoute)
 app.use('/api/admin',adminRoute)
 app.use('/api/product',productRoute)
+app.use('/api/cart',cartRoute)
 
 mongoose.connect("mongodb+srv://farzanmohan:Vm5wPVmYgvfpaGuz@shipkartdb.usxzsgl.mongodb.net/shipKartAPI?retryWrites=true&w=majority&appName=shipkartDB")
 .then(()=>{
