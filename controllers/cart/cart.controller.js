@@ -33,4 +33,20 @@ const getCartItems = async(req,res)=>{
         res.status(500).json({ message: error.message});
     }
 }
-module.exports = {addToCart,getCartItems}
+
+const removeCartItem =  async(req,res)=>{
+    try{
+        console.log("hurrrr")
+        const cartitem = await Cart.find({product_id:req.params.id})
+        if(!cartitem.length){
+            return res.status(500).json({message:"Cart item doesn't exist"})
+        }
+        const deletedcartitem = await Cart.deleteOne({product_id:req.params.id})
+        res.status(200).json({message:"cartitem removed successfully",deletedcartitem})
+
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
+module.exports = {addToCart,getCartItems,removeCartItem}
