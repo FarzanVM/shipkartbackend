@@ -1,5 +1,6 @@
 const Product = require('../../models/product.model');
 
+
 const addProduct = async(req,res)=>{
     try{
         const product =  await Product.findOne({productname:req.body.productname,

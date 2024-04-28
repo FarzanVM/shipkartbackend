@@ -7,12 +7,13 @@ const getWishListItems =  async(req,res) =>{
 
         const wishlistitem = await WishList.find({username:req.body.username})
 
+        console.log("wwsi",wishlistitem)
         if(!wishlistitem.length){
-            return res.status(500).json({message:"Wishlist is Empty"})
+            return res.status(200).json({message:"Wishlist is Empty"})
         }
         let Wishlisteditems=[]
         for(var i=0;i<wishlistitem.length;i++){
-            Wishlisteditems.push(await Product.find({_id:wishlistitem[i].product_id}))
+            Wishlisteditems = Wishlisteditems.concat(await Product.find({_id:wishlistitem[i].product_id}))
         }
         res.status(200).json(Wishlisteditems)
     }
@@ -24,7 +25,7 @@ const getWishListItems =  async(req,res) =>{
 const addToWishlist = async(req,res) =>{
     try{
         const item = await WishList.find({product_id:req.body.product_id})
-        if(item.list){
+        if(item.length){
             return res.status(500).json({message:"Item Already Added to Wishlist"})
         }
         const wishlistitem = await WishList.create(req.body)
