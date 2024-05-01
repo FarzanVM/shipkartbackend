@@ -7,11 +7,27 @@ const getOrders=async(req,res)=>{
         if(!order.length){
             return res.status(500).json({message:"No running Orders"})
         }
-        orderitems=[]
-        for(var i=0;i<order.length;i++){
-            orderitems = orderitems.concat(await Product.findOne({_id:order[i].product_id}))
-        }
-        res.status(200).json(orderitems)
+
+        const orderedProducts =await Order.aggregate([   
+            {
+                $match:{username:req.body.username}
+              },
+            {
+            $lookup:{
+                from:'products',
+                localField:'product_id',
+                foreignField:'_id',
+                as:'products'
+            }},
+            {
+                $unwind:'$products'
+            }
+        ])
+        ordereditems = []
+        orderedProducts.forEach(element => {
+            ordereditems.push(element.products)
+        });
+        res.status(200).json(ordereditems)
 
     }
     catch(error){

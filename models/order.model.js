@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
-
 const OrderSchema = mongoose.Schema({
 
     product_id:{
-        type:String,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Product",
         required:true
     },
     orderstatus:{
