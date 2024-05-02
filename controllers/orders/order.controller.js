@@ -21,13 +21,19 @@ const getOrders=async(req,res)=>{
             }},
             {
                 $unwind:'$products'
+            },
+            {
+                $project:{
+                    orderstatus:1,
+                   'products.productname':1,
+                   'products.productnewprice':1,
+                   'products.storename':1,
+                   'products.productimg':1
+                }
             }
         ])
-        ordereditems = []
-        orderedProducts.forEach(element => {
-            ordereditems.push(element.products)
-        });
-        res.status(200).json(ordereditems)
+        
+        res.status(200).json(orderedProducts)
 
     }
     catch(error){
