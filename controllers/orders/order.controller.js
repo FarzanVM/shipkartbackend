@@ -47,7 +47,7 @@ const addOrder = async(req,res) =>{
         if(order){
             return res.status(500).json({message:"Item already Ordered"})
         }
-        const neworder = Order.create(req.body)
+        const neworder =await  Order.create(req.body)
         res.status(200).json({message:"Item Successfully Ordered"})
     }
     catch(error){
@@ -57,11 +57,12 @@ const addOrder = async(req,res) =>{
 
 const updateOrder = async(req,res) =>{
     try{
-        const order = await order.find({_id:req.body._id,storename:req.body.storename})
-        if(!order.length){
+        const order = await Order.findOne({_id:req.body._id})
+        if(!order){
             return res.status(500).json({message:"Order Doesn't Exist"})
         }
-        const updatedorder = Order.update({_id:req.body._id}, {$set :{orderstatus:req.body.orderstatus}})
+
+        const updatedorder =await  Order.updateOne({_id:req.body._id}, {$set :{orderstatus:req.body.orderstatus}})
         res.status(200).json({message:"Order Updated Successfully"})
     }
     catch(error){
@@ -71,14 +72,35 @@ const updateOrder = async(req,res) =>{
 
 const getStoreOrders = async(req,res)=>{
     try{
-        const order = await order.find({storename:req.body.storename})
+        const order = await Order.find({storename:req.body.storename})
         if(!order.length){
-           return res.status(500).json({message:"No Order as of yet"})
+           return res.status(500).json({message:"No Orders as of yet"})
         }
-        storeOrders=[]
-        for(var i=0;i<order.length;i++){
-            storeOrders=storeOrders.concat(await Product.findOne({_id:order[i].product_id}))
-        }
+        
+        const storeOrders = await Order.aggregate([
+            {
+                $match:{storename:req.body.storename}
+            },
+            {
+                $lookup:{
+                    from:'products',
+                    localField:'product_id',
+                    foreignField:'_id',
+                    as:'products'
+                }
+            },
+            {
+                $unwind:'$products'
+            },
+            {
+                $project:{
+                    orderstatus:1,
+                    username:1,
+                    'products.productimg':1,
+                    'products.productname':1
+                }
+            }
+        ])
         res.status(200).json(storeOrders)
     }
     catch(error){

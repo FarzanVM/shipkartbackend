@@ -18,8 +18,33 @@ const addProduct = async(req,res)=>{
 }
 const getProducts = async(req,res)=>{
     try{
-        const product =  await Product.find({});
-        res.status(200).json(product)
+        const username=req.params.username
+        console.log("username",username)
+        if(username!=="null"){
+            console.log("herede")
+            const products = await Product.aggregate([
+                {
+                    $lookup:{
+                        from:'wishlists',
+                       let:{"id":"$_id"},
+                       pipeline:[
+                        {
+                            $match:{
+                                $expr:{$and:[{$eq:["$product_id","$$id"]},{username:req.params.username}]}
+                            }
+                        }
+                       ],
+                        as:'wishlisted'
+                    }
+                }
+            ])
+            res.status(200).json(products)
+        }
+        else{
+            const products=await Product.find({})
+            console.log("here")
+            res.status(200).json(products)
+        } 
     }
     catch(error){
         res.status(500).json({message: error.message})
@@ -30,7 +55,7 @@ const getStoreProducts = async(req,res) =>{
     try{
         const products = await Product.find({storename:req.body.storename});
         if(!products.length){
-            return res.status(500).json({message:"Products related to this store doesnt exist"})
+            return res.status(204).json({message:"Products related to this store doesnt exist"})
         }
         res.status(200).json(products)
     }
