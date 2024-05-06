@@ -9,6 +9,15 @@ const UserSchema = mongoose.Schema({
         type:String,
         required:true
     },
+    name:{
+        type:String
+    },
+    contactno:{
+        type:String
+    },
+    address:{
+        type:String
+    },
     user_type:String
 
 });

@@ -18,6 +18,33 @@ const addUser = async (req, res) => {
     }
 }
 
+const getUser = async(req,res)=>{
+    try{
+        const user = await User.findOne({ email: req.params.username})
+        if (!user) {
+            return res.status(204).json({ message: "User doesn't exist" })
+        }
+       res.status(200).json(user)
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
+const updateUser = async(req,res) =>{
+    try{
+        const user = await User.findOne({email:req.body.email});
+        if(!user){
+            return res.status(204).json({message:"User doesn't exist"})
+        }
+
+        const updatedUser = await User.updateOne({email:req.body.email},{$set:req.body})
+        return res.status(200).json({message:"User Profile Updated Successfully"})
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
+
 const checkUser = async (req, res) => {
     try {
         const user = await User.find(req.body)
@@ -57,4 +84,4 @@ const login = async (req, res) => {
     }
 }
 
-module.exports = { checkUser, addUser, login }
+module.exports = { checkUser, addUser, login,getUser,updateUser }

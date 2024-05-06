@@ -5,7 +5,7 @@ const getOrders=async(req,res)=>{
     try{
         const order = await Order.find({username:req.body.username})
         if(!order.length){
-            return res.status(500).json({message:"No running Orders"})
+            return res.status(204).json({message:"No running Orders"})
         }
 
         const orderedProducts =await Order.aggregate([   
@@ -74,7 +74,7 @@ const getStoreOrders = async(req,res)=>{
     try{
         const order = await Order.find({storename:req.body.storename})
         if(!order.length){
-           return res.status(500).json({message:"No Orders as of yet"})
+           return res.status(204).json({message:"No Orders as of yet"})
         }
         
         const storeOrders = await Order.aggregate([
