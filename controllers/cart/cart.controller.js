@@ -21,12 +21,29 @@ const getCartItems = async(req,res)=>{
     try{
         const cartitem =await  Cart.find({username:req.body.username})
         if(!cartitem.length){
-            return res.status(500).json({message:"No Cart Items"})
+            return res.status(204).json({message:"No Cart Items"})
         }
-        let cartItemList=[]
-        for(var i=0;i<cartitem.length;i++){
-            cartItemList.push(await Product.find({_id:cartitem[i].product_id}))
-        }
+        const cartItemList=await Cart.aggregate([
+            {
+                $match:{username:req.body.username}
+            },
+            {
+                $lookup:{
+                    from:'products',
+                    localField:'product_id',
+                    foreignField:'_id',
+                    as:'products'
+                }
+            },
+            {
+                $unwind:'$products'
+            },
+            {
+                $project:{
+                    'products':1
+                }
+            }
+        ])
         res.status(200).json(cartItemList)
     }
     catch(error){

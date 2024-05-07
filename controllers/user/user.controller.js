@@ -65,7 +65,6 @@ const login = async (req, res) => {
         if (!user.length) {
             return res.status(404).json({ message: "User does not exist" })
         }
-        console.log(user)
         const resp = {
             userId: user[0]._id,
             username: user[0].email

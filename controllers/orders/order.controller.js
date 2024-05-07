@@ -43,11 +43,7 @@ const getOrders=async(req,res)=>{
 
 const addOrder = async(req,res) =>{
     try{
-        const order = await Order.findOne({product_id:req.body.product_id,username:req.body.username})
-        if(order){
-            return res.status(500).json({message:"Item already Ordered"})
-        }
-        const neworder =await  Order.create(req.body)
+        const neworder = await Order.insertMany(req.body)
         res.status(200).json({message:"Item Successfully Ordered"})
     }
     catch(error){
