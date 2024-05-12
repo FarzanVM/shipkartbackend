@@ -25,10 +25,55 @@ const getOrders=async(req,res)=>{
             {
                 $project:{
                     orderstatus:1,
+                    quantity:1,
                    'products.productname':1,
                    'products.productnewprice':1,
                    'products.storename':1,
-                   'products.productimg':1
+                   'products.productimg':1,
+    
+                }
+            }
+        ])
+        
+        res.status(200).json(orderedProducts)
+
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
+
+const getCurrentOrders=async(req,res) =>{
+    try{
+        const order = await Order.find({username:req.body.username,orderstatus:"in progress"})
+        if(!order.length){
+            return res.status(204).json({message:"No running Orders"})
+        }
+
+        const orderedProducts =await Order.aggregate([   
+            {
+                $match:{username:req.body.username}
+              },
+            {
+            $lookup:{
+                from:'products',
+                localField:'product_id',
+                foreignField:'_id',
+                as:'products'
+            }},
+            {
+                $unwind:'$products'
+            },
+            {
+                $project:{
+                    orderstatus:1,
+                    quantity:1,
+                   'products.productname':1,
+                   'products.productnewprice':1,
+                   'products.storename':1,
+                   'products.productimg':1,
+                    'products.productdiscount':1
+    
                 }
             }
         ])
@@ -64,6 +109,32 @@ const updateOrder = async(req,res) =>{
     catch(error){
         res.status(500).json({message:error.message})
     }
+}
+
+const updateBulkOrder =  async(req,res) =>{
+    try{
+        const bulkorder = req.body.map(obj =>{
+            return {
+                updateOne:{
+                    filter:{
+                        _id:obj._id
+                    },
+                    update:{
+                       orderstatus:'order confirmed'
+                    }
+                }
+            }
+
+        })
+        Order.bulkWrite(bulkorder).then((response)=>{
+            res.status(200).json({message:"Order Successfully Placed"})
+        })
+
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+
 }
 
 const getStoreOrders = async(req,res)=>{
@@ -104,4 +175,4 @@ const getStoreOrders = async(req,res)=>{
     }
 }
 
-module.exports = {getStoreOrders,getOrders,updateOrder,addOrder}
+module.exports = {getStoreOrders,getOrders,updateOrder,addOrder,getCurrentOrders,updateBulkOrder}

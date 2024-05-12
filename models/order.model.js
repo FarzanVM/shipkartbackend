@@ -9,6 +9,10 @@ const OrderSchema = mongoose.Schema({
     orderstatus:{
         type:String,
     },
+    quantity:{
+        type:Number,
+        required:true
+    },
     username:{
         type:String,
         required:true
