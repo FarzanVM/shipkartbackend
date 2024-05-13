@@ -45,14 +45,14 @@ const getOrders=async(req,res)=>{
 
 const getCurrentOrders=async(req,res) =>{
     try{
-        const order = await Order.find({username:req.body.username,orderstatus:"in progress"})
+        const order = await Order.find({$and:[{username:req.body.username},{orderstatus:"in progress"}]})
         if(!order.length){
             return res.status(204).json({message:"No running Orders"})
         }
 
         const orderedProducts =await Order.aggregate([   
             {
-                $match:{username:req.body.username}
+                $match:{$and:[{username:req.body.username},{orderstatus:"in progress"}]}
               },
             {
             $lookup:{
