@@ -50,7 +50,20 @@ const getProducts = async(req,res)=>{
         res.status(500).json({message: error.message})
     }
 }
+const getSingleProduct = async(req,res)=>{
+    try{
+        const productId = req.params.id
+        const product = await Product.findOne({_id:productId})
+        if(!product){
+            return res.status(204).json("Product Doesn't Exist")
+        }
+        return res.status(200).json(product)
 
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+}
 const getStoreProducts = async(req,res) =>{
     try{
         const products = await Product.find({storename:req.body.storename});
@@ -90,4 +103,4 @@ const updateProduct = async(req,res) =>{
         res.status(500).json({message:error.message})
     }
 }
-module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct};
+module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct};
