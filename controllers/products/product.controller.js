@@ -76,6 +76,23 @@ const getStoreProducts = async(req,res) =>{
         res.status(500).json({message:error.message});
     }
 }
+
+const getProductsByCategory = async(req,res)=>{
+    try{
+        const category = req.params.category
+        const products = await Product.find({productcategory:category})
+
+        if(!products.length){
+            return res.status(204).json({message:"Products of this type Doesn't Exist"})
+        }
+
+        res.status(200).json(products)
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+
+}
 const deleteProduct =  async(req,res) =>{
     try{
         const product =  await Product.find({_id:req.params.id});
@@ -103,4 +120,4 @@ const updateProduct = async(req,res) =>{
         res.status(500).json({message:error.message})
     }
 }
-module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct};
+module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct,getProductsByCategory};
