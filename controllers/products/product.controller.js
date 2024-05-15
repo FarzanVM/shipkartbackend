@@ -16,6 +16,24 @@ const addProduct = async(req,res)=>{
         res.status(500).json({ message: error.message});
     }
 }
+
+const getProductsBy =  async(req,res) =>{
+    try{
+        const sortBy=req.query.sortby
+        const orderBy=req.query.orderby
+        let order=1
+        if(orderBy!=='asc'){
+            order=-1
+        }
+        const products = await Product.find({}).sort({productprice:order})
+        res.status(200).json(products)
+
+    }
+    catch(error){
+        res.status(500).json({ message: error.message});
+    }
+}
+
 const getProducts = async(req,res)=>{
     try{
         const username=req.params.username
@@ -120,4 +138,4 @@ const updateProduct = async(req,res) =>{
         res.status(500).json({message:error.message})
     }
 }
-module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct,getProductsByCategory};
+module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct,getProductsByCategory,getProductsBy};
