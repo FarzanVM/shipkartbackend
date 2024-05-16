@@ -120,7 +120,7 @@ const updateBulkOrder =  async(req,res) =>{
                         _id:obj._id
                     },
                     update:{
-                       orderstatus:'order confirmed'
+                       orderstatus:'Order Confirmed'
                     }
                 }
             }
