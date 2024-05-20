@@ -1,5 +1,19 @@
 const Product = require('../../models/product.model');
 
+const searchProducts = async(req,res) =>{
+    try{
+        const keyword = req.params.keyword
+        const products =await Product.find({$text:{$search:keyword}})
+        if(!products.length){
+            return res.status(204).json({message:"No Results Found"})
+        }
+        res.status(200).json(products)
+    }
+    catch(error){
+        res.status(500).json({ message: error.message})
+    }
+}
+  
 
 const addProduct = async(req,res)=>{
     try{
@@ -138,4 +152,5 @@ const updateProduct = async(req,res) =>{
         res.status(500).json({message:error.message})
     }
 }
-module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct,getProductsByCategory,getProductsBy};
+module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct,
+    getProductsByCategory,getProductsBy,searchProducts};

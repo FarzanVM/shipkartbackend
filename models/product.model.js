@@ -3,10 +3,12 @@ const mongoose = require('mongoose')
 const ProductSchema = mongoose.Schema({
     productname:{
         type:String,
+        index:true,
         required:true
     },
     productcategory:{
         type:String,
+        index:true,
         required:true
     },
     productdesc:{
@@ -38,7 +40,7 @@ const ProductSchema = mongoose.Schema({
         required:true
     }
 })
-
+ProductSchema.index({productname:'text',productcategory:'text'})
 const Product = mongoose.model('Product',ProductSchema)
 
 module.exports = Product
