@@ -45,14 +45,16 @@ const getOrders=async(req,res)=>{
 
 const getCurrentOrders=async(req,res) =>{
     try{
-        const order = await Order.find({$and:[{username:req.body.username},{orderstatus:"in progress"}]})
+        console.log(req.body.username)
+        const order = await Order.find({$and:[{username:req.body.username},{'orderstatus.inprogress.status':'true'}]})
+        console.log("oor",order)
         if(!order.length){
             return res.status(204).json({message:"No running Orders"})
         }
 
         const orderedProducts =await Order.aggregate([   
             {
-                $match:{$and:[{username:req.body.username},{orderstatus:"in progress"}]}
+                $match:{$and:[{username:req.body.username},{'orderstatus.inprogress.status':true}]}
               },
             {
             $lookup:{
@@ -77,7 +79,7 @@ const getCurrentOrders=async(req,res) =>{
                 }
             }
         ])
-        
+        console.log("p",orderedProducts)
         res.status(200).json(orderedProducts)
 
     }
@@ -89,6 +91,7 @@ const getCurrentOrders=async(req,res) =>{
 const addOrder = async(req,res) =>{
     try{
         const neworder = await Order.insertMany(req.body)
+        console.log("order",req.body)
         res.status(200).json({message:"Item Successfully Ordered"})
     }
     catch(error){
@@ -102,6 +105,7 @@ const updateOrder = async(req,res) =>{
         if(!order){
             return res.status(500).json({message:"Order Doesn't Exist"})
         }
+        
 
         const updatedorder =await  Order.updateOne({_id:req.body._id}, {$set :{orderstatus:req.body.orderstatus}})
         res.status(200).json({message:"Order Updated Successfully"})

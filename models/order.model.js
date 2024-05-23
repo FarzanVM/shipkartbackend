@@ -7,8 +7,50 @@ const OrderSchema = mongoose.Schema({
         required:true
     },
     orderstatus:{
-        type:String,
-    },
+
+        inprogress:{
+            status:{
+                type:Boolean,
+            },
+            date:{
+                type:Date
+            }
+        },
+        confirmed:{
+            status:{
+                type:Boolean,
+            },
+            date:{
+                type:Date
+            }
+        },
+        shipped:{
+            status:{
+                type:Boolean,
+            },
+            date:{
+                type:Date
+            }
+        },
+        outfordelivery:{
+            status:{
+                type:Boolean,
+            },
+            date:{
+                type:Date
+            }
+        },
+        delivered:{
+            status:{
+                type:Boolean,
+            },
+            date:{
+                type:Date
+            }
+        }
+
+    }
+     ,
     quantity:{
         type:Number,
         required:true
