@@ -33,13 +33,14 @@ const addProduct = async(req,res)=>{
 
 const getProductsBy =  async(req,res) =>{
     try{
+        const item = req.query.item
         const sortBy=req.query.sortby
         const orderBy=req.query.orderby
         let order=1
         if(orderBy!=='asc'){
             order=-1
         }
-        const products = await Product.find({}).sort({productprice:order})
+        const products = await Product.find({$text:{$search:item}}).sort({productprice:order})
         res.status(200).json(products)
 
     }
