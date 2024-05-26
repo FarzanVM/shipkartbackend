@@ -1,5 +1,5 @@
 const express = require("express");
-const {getStoreOrders,getOrders,updateOrder, addOrder, getCurrentOrders, updateBulkOrder} = require('../controllers/orders/order.controller')
+const {getStoreOrders,getOrders,updateOrder, addOrder, getCurrentOrders, updateBulkOrder, deleteBulkOrder} = require('../controllers/orders/order.controller')
 const {checkAuth} = require('../middleware/check-authorization')
 
 const router = express.Router()
@@ -15,5 +15,7 @@ router.post('/getstoreorders',checkAuth,getStoreOrders)
 router.post('/getcurrentorders',checkAuth,getCurrentOrders)
 
 router.post('/updatebulkorders',checkAuth,updateBulkOrder)
+
+router.post('/deletebulkorders',checkAuth,deleteBulkOrder)
 
 module.exports = router

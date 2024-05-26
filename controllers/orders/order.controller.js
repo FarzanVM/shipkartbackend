@@ -54,7 +54,7 @@ const getCurrentOrders=async(req,res) =>{
 
         const orderedProducts =await Order.aggregate([   
             {
-                $match:{$and:[{username:req.body.username},{'orderstatus.inprogress.status':true}]}
+                $match:{$and:[{username:req.body.username},{'orderstatus.inprogress.status':true,'orderstatus.confirmed.status':false}]}
               },
             {
             $lookup:{
@@ -79,7 +79,7 @@ const getCurrentOrders=async(req,res) =>{
                 }
             }
         ])
-        console.log("p",orderedProducts)
+        
         res.status(200).json(orderedProducts)
 
     }
@@ -106,8 +106,12 @@ const updateOrder = async(req,res) =>{
             return res.status(500).json({message:"Order Doesn't Exist"})
         }
         
-
-        const updatedorder =await  Order.updateOne({_id:req.body._id}, {$set :{orderstatus:req.body.orderstatus}})
+        const key = req.body.orderstatus
+        const date = req.body.date
+        
+        const statuspath = `orderstatus.${key}.status`
+        const datepath = `orderstatus.${key}.date`
+        const updatedorder =await  Order.updateOne({_id:req.body._id}, {$set :{[statuspath]:true,[datepath]:date}})
         res.status(200).json({message:"Order Updated Successfully"})
     }
     catch(error){
@@ -124,7 +128,8 @@ const updateBulkOrder =  async(req,res) =>{
                         _id:obj._id
                     },
                     update:{
-                       orderstatus:'Order Confirmed'
+                       'orderstatus.confirmed.status':true,
+                       'orderstatus.confirmed.date':obj.date
                     }
                 }
             }
@@ -139,6 +144,30 @@ const updateBulkOrder =  async(req,res) =>{
         res.status(500).json({message:error.message})
     }
 
+}
+
+const deleteBulkOrder = async(req,res)=>{
+    try{
+        const bulkorder = req.body.map(obj =>{
+            return {
+                deleteOne:{
+                    filter:{
+                        _id:obj._id
+                    },
+                    delete:{
+                       'orderstatus.inprogress.status':true,
+                    }
+                }
+            }
+
+        })
+        Order.bulkWrite(bulkorder).then((response)=>{
+            res.status(200).json({message:"Order Deleted Successfully"})
+        })
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
 }
 
 const getStoreOrders = async(req,res)=>{
@@ -179,4 +208,4 @@ const getStoreOrders = async(req,res)=>{
     }
 }
 
-module.exports = {getStoreOrders,getOrders,updateOrder,addOrder,getCurrentOrders,updateBulkOrder}
+module.exports = {getStoreOrders,getOrders,updateOrder,addOrder,getCurrentOrders,updateBulkOrder,deleteBulkOrder}
