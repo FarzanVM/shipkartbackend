@@ -2,7 +2,6 @@ const Product = require('../../models/product.model');
 
 const searchProducts = async(req,res) =>{
     try{
-        console.log("body",req.body)
         const keyword = req.params.keyword
         const products =await Product.find({$text:{$search:keyword}})
         if(!products.length){
