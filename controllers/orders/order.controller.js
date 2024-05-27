@@ -1,6 +1,7 @@
 const Order=require('../../models/order.model')
 const Product = require('../../models/product.model')
 
+//user
 const getOrders=async(req,res)=>{
     try{
         const order = await Order.find({username:req.body.username})
@@ -42,7 +43,6 @@ const getOrders=async(req,res)=>{
         res.status(500).json({message:error.message})
     }
 }
-
 const getCurrentOrders=async(req,res) =>{
     try{
         console.log(req.body.username)
@@ -87,38 +87,6 @@ const getCurrentOrders=async(req,res) =>{
         res.status(500).json({message:error.message})
     }
 }
-
-const addOrder = async(req,res) =>{
-    try{
-        const neworder = await Order.insertMany(req.body)
-        console.log("order",req.body)
-        res.status(200).json({message:"Item Successfully Ordered"})
-    }
-    catch(error){
-        res.status(500).json({message:error.message})
-    }
-}
-
-const updateOrder = async(req,res) =>{
-    try{
-        const order = await Order.findOne({_id:req.body._id})
-        if(!order){
-            return res.status(500).json({message:"Order Doesn't Exist"})
-        }
-        
-        const key = req.body.orderstatus
-        const date = req.body.date
-        
-        const statuspath = `orderstatus.${key}.status`
-        const datepath = `orderstatus.${key}.date`
-        const updatedorder =await  Order.updateOne({_id:req.body._id}, {$set :{[statuspath]:true,[datepath]:date}})
-        res.status(200).json({message:"Order Updated Successfully"})
-    }
-    catch(error){
-        res.status(500).json({message:error.message})
-    }
-}
-
 const updateBulkOrder =  async(req,res) =>{
     try{
         const bulkorder = req.body.map(obj =>{
@@ -145,7 +113,6 @@ const updateBulkOrder =  async(req,res) =>{
     }
 
 }
-
 const deleteBulkOrder = async(req,res)=>{
     try{
         const bulkorder = req.body.map(obj =>{
@@ -170,6 +137,36 @@ const deleteBulkOrder = async(req,res)=>{
     }
 }
 
+//admin
+const addOrder = async(req,res) =>{
+    try{
+        const neworder = await Order.insertMany(req.body)
+        console.log("order",req.body)
+        res.status(200).json({message:"Item Successfully Ordered"})
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
+const updateOrder = async(req,res) =>{
+    try{
+        const order = await Order.findOne({_id:req.body._id})
+        if(!order){
+            return res.status(500).json({message:"Order Doesn't Exist"})
+        }
+        
+        const key = req.body.orderstatus
+        const date = req.body.date
+        
+        const statuspath = `orderstatus.${key}.status`
+        const datepath = `orderstatus.${key}.date`
+        const updatedorder =await  Order.updateOne({_id:req.body._id}, {$set :{[statuspath]:true,[datepath]:date}})
+        res.status(200).json({message:"Order Updated Successfully"})
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
 const getStoreOrders = async(req,res)=>{
     try{
         const order = await Order.find({storename:req.body.storename})

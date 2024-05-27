@@ -1,5 +1,6 @@
 const Product = require('../../models/product.model');
 
+//user
 const searchProducts = async(req,res) =>{
     try{
         const keyword = req.params.keyword
@@ -13,49 +14,58 @@ const searchProducts = async(req,res) =>{
         res.status(500).json({ message: error.message})
     }
 }
-  
-
-const addProduct = async(req,res)=>{
-    try{
-        const product =  await Product.findOne({productname:req.body.productname,
-            storename:req.body.storename
-        })
-        if(product){
-            return res.status(500).json({ message: "Product already Exist in the Store" })
-        }
-        const newProduct = Product.create(req.body)
-        res.status(200).json({ message: "Product Added successfully"})
-    }
-    catch(error){
-        res.status(500).json({ message: error.message});
-    }
-}
-
 const getProductsBy =  async(req,res) =>{
     try{
         const item = req.query.item
         const sortBy=req.query.sortby
         const orderBy=req.query.orderby
+        const username = req.body.username
         let order=1
         if(orderBy!=='asc'){
             order=-1
         }
-        const products = await Product.find({$text:{$search:item}}).sort({productprice:order})
-        res.status(200).json(products)
-
+        if(username!==null){
+            const products = await Product.aggregate([
+                {
+                    $match:{$text:{$search:item}}
+                },
+                {
+                    $lookup:{
+                        from:'wishlists',
+                       let:{"id":"$_id"},
+                       pipeline:[
+                        {
+                            $match:{
+                                $expr:{$and:[{$eq:["$product_id","$$id"]},{username:req.params.username}]}
+                            }
+                        }
+                       ],
+                        as:'wishlisted'
+                    }
+                }
+            ]).sort({productprice:order})
+            res.status(200).json(products)
+        }
+        else{
+            const products = await Product.find({$text:{$search:item}}).sort({productprice:order})
+            res.status(200).json(products)
+        }
     }
     catch(error){
         res.status(500).json({ message: error.message});
     }
 }
-
 const getProducts = async(req,res)=>{
     try{
-        const username=req.params.username
-        console.log("username",username)
-        if(username!=="null"){
-            console.log("herede")
+        const username=req.body.username
+        const keyword = req.params.keyword
+      
+        if(username!==null){
+
             const products = await Product.aggregate([
+                {
+                    $match:{$text:{$search:keyword}}
+                },
                 {
                     $lookup:{
                         from:'wishlists',
@@ -74,8 +84,7 @@ const getProducts = async(req,res)=>{
             res.status(200).json(products)
         }
         else{
-            const products=await Product.find({})
-            console.log("here")
+            const products=await Product.find({$text:{$search:keyword}})
             res.status(200).json(products)
         } 
     }
@@ -97,19 +106,6 @@ const getSingleProduct = async(req,res)=>{
         res.status(500).json({message: error.message})
     }
 }
-const getStoreProducts = async(req,res) =>{
-    try{
-        const products = await Product.find({storename:req.body.storename});
-        if(!products.length){
-            return res.status(204).json({message:"Products related to this store doesnt exist"})
-        }
-        res.status(200).json(products)
-    }
-    catch(error){
-        res.status(500).json({message:error.message});
-    }
-}
-
 const getProductsByCategory = async(req,res)=>{
     try{
         const category = req.params.category
@@ -126,6 +122,36 @@ const getProductsByCategory = async(req,res)=>{
     }
 
 }
+
+//admin
+const addProduct = async(req,res)=>{
+    try{
+        const product =  await Product.findOne({productname:req.body.productname,
+            storename:req.body.storename
+        })
+        if(product){
+            return res.status(500).json({ message: "Product already Exist in the Store" })
+        }
+        const newProduct = Product.create(req.body)
+        res.status(200).json({ message: "Product Added successfully"})
+    }
+    catch(error){
+        res.status(500).json({ message: error.message});
+    }
+}
+const getStoreProducts = async(req,res) =>{
+    try{
+        const products = await Product.find({storename:req.body.storename});
+        if(!products.length){
+            return res.status(204).json({message:"Products related to this store doesnt exist"})
+        }
+        res.status(200).json(products)
+    }
+    catch(error){
+        res.status(500).json({message:error.message});
+    }
+}
+
 const deleteProduct =  async(req,res) =>{
     try{
         const product =  await Product.find({_id:req.params.id});

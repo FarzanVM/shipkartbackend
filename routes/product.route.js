@@ -5,7 +5,7 @@ const {checkAuth }= require('../middleware/check-authorization')
 
 const router = express.Router();
 
-router.get('/getproducts/:username',getProducts);
+router.post('/getproducts/:keyword',getProducts);
 
 router.post('/getstoreproducts',checkAuth,getStoreProducts);
 
@@ -19,7 +19,7 @@ router.get('/getsingleproduct/:id',getSingleProduct);
 
 router.get('/getproductsbycategory/:category',getProductsByCategory)
 
-router.get('/getproductsby?',getProductsBy)
+router.post('/getproductsby?',getProductsBy)
 
 router.get('/searchproducts/:keyword',searchProducts)
 
