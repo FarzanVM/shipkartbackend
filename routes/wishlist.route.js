@@ -5,6 +5,8 @@ const {checkAuth }= require('../middleware/check-authorization')
 
 const router = express.Router();
 
+//for User
+
 router.post('/getwishlistitems',checkAuth,getWishListItems)
 router.post('/addtowishlist',checkAuth,addToWishlist)
 router.delete('/removefromwishlist/:id',checkAuth,removeFromWishList)

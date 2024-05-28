@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const WishList = require('../../models/wishlist.model');
 const Product  = require('../../models/product.model')
 
+//for User
+
 const getWishListItems =  async(req,res) =>{
     try{
 

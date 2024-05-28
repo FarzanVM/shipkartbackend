@@ -1,6 +1,7 @@
 const Cart = require('../../models/cart.model');
 const Product  = require('../../models/product.model')
 
+//for User
 const addToCart = async(req,res)=>{
     try{
 

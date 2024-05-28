@@ -122,6 +122,16 @@ const getProductsByCategory = async(req,res)=>{
     }
 
 }
+const getBestDeals =  async(req,res)=>{
+    try{
+        const products = await Product.find({productdiscount:{$gt:10}})
+        res.status(200).json(products)
+
+    }
+    catch(error){
+        res.status(500).json({messge:error.message})
+    }
+}
 
 //admin
 const addProduct = async(req,res)=>{
@@ -180,4 +190,4 @@ const updateProduct = async(req,res) =>{
     }
 }
 module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct,
-    getProductsByCategory,getProductsBy,searchProducts};
+    getProductsByCategory,getProductsBy,searchProducts,getBestDeals};

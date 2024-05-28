@@ -4,6 +4,8 @@ const{ checkAuth} = require('../middleware/check-authorization')
 
 const router = express.Router();
 
+// for User
+
 router.post('/signup',addUser);
 
 router.get('/checkUser',checkUser)

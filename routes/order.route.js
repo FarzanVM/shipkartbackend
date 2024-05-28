@@ -4,18 +4,23 @@ const {checkAuth} = require('../middleware/check-authorization')
 
 const router = express.Router()
 
+//for user
 router.post('/addorder',checkAuth,addOrder)
-
-router.patch('/updateorder',checkAuth,updateOrder)
-
-router.post('/getorders',checkAuth,getOrders)
-
-router.post('/getstoreorders',checkAuth,getStoreOrders)
-
-router.post('/getcurrentorders',checkAuth,getCurrentOrders)
 
 router.post('/updatebulkorders',checkAuth,updateBulkOrder)
 
+router.post('/getorders',checkAuth,getOrders)
+
+router.post('/getcurrentorders',checkAuth,getCurrentOrders)
+
 router.post('/deletebulkorders',checkAuth,deleteBulkOrder)
+
+//for Admin
+
+router.post('/getstoreorders',checkAuth,getStoreOrders)
+
+router.patch('/updateorder',checkAuth,updateOrder)
+
+
 
 module.exports = router
