@@ -193,8 +193,10 @@ const getStoreOrders = async(req,res)=>{
                 $project:{
                     orderstatus:1,
                     username:1,
+                    quantity:1,
                     'products.productimg':1,
-                    'products.productname':1
+                    'products.productname':1,
+                    'products.productnewprice':1
                 }
             }
         ])
