@@ -27,7 +27,7 @@ const getProductsBy =  async(req,res) =>{
         if(username!==null){
             const products = await Product.aggregate([
                 {
-                    $match:{$text:{$search:item}}
+                    $match:{$text:{$search:item},productnewprice:{$gte:20000,$lt:70000}}
                 },
                 {
                     $lookup:{
@@ -55,6 +55,7 @@ const getProductsBy =  async(req,res) =>{
         res.status(500).json({ message: error.message});
     }
 }
+
 const getProducts = async(req,res)=>{
     try{
         const username=req.body.username
