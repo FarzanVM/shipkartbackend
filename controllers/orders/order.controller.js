@@ -27,9 +27,9 @@ const getOrders=async(req,res)=>{
                 $project:{
                     orderstatus:1,
                     quantity:1,
+                    price:1,
+                    storename:1,
                    'products.productname':1,
-                   'products.productnewprice':1,
-                   'products.storename':1,
                    'products.productimg':1,
     
                 }
@@ -70,12 +70,10 @@ const getCurrentOrders=async(req,res) =>{
                 $project:{
                     orderstatus:1,
                     quantity:1,
+                    price:1,
+                    storename:1,
                    'products.productname':1,
-                   'products.productnewprice':1,
-                   'products.storename':1,
                    'products.productimg':1,
-                    'products.productdiscount':1
-    
                 }
             }
         ])
@@ -194,9 +192,9 @@ const getStoreOrders = async(req,res)=>{
                     orderstatus:1,
                     username:1,
                     quantity:1,
+                    price:1,
                     'products.productimg':1,
                     'products.productname':1,
-                    'products.productnewprice':1
                 }
             }
         ])
