@@ -1,5 +1,5 @@
 const express = require("express");
-const {addProduct,getProducts,getStoreProducts, deleteProduct, updateProduct, getSingleProduct, getProductsByCategory, getProductsBy, searchProducts, getBestDeals} = require('../controllers/products/product.controller')
+const {addProduct,getProducts,getStoreProducts, deleteProduct, updateProduct, getSingleProduct, getProductsByCategory, getProductsBy, searchProducts, getBestDeals, getProducts_By_PriceRange} = require('../controllers/products/product.controller')
 // const checkAuth = require('../middleware/check-authorization')
 const {checkAuth }= require('../middleware/check-authorization')
 
@@ -14,6 +14,8 @@ router.get('/getsingleproduct/:id',getSingleProduct);
 router.get('/getproductsbycategory/:category',getProductsByCategory)
 
 router.post('/getproductsby?',getProductsBy)
+
+router.post('/getproductsbypricerange?',getProducts_By_PriceRange)
 
 router.get('/searchproducts/:keyword',searchProducts)
 

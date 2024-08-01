@@ -20,6 +20,9 @@ const getProductsBy =  async(req,res) =>{
         const sortBy=req.query.sortby
         const orderBy=req.query.orderby
         const username = req.body.username
+        const startRange = req.body.startrange
+        const endRange = req.body.endrange
+        
         let order=1
         if(orderBy!=='asc'){
             order=-1
@@ -27,7 +30,7 @@ const getProductsBy =  async(req,res) =>{
         if(username!==null){
             const products = await Product.aggregate([
                 {
-                    $match:{$text:{$search:item},productnewprice:{$gte:20000,$lt:70000}}
+                    $match:{$text:{$search:item},productnewprice:{$gte:startRange,$lt:endRange}}
                 },
                 {
                     $lookup:{
@@ -47,9 +50,51 @@ const getProductsBy =  async(req,res) =>{
             res.status(200).json(products)
         }
         else{
-            const products = await Product.find({$text:{$search:item}}).sort({productprice:order})
+            const products = await Product.find({$text:{$search:item},productnewprice:{$gte:startRange,$lt:endRange}}).sort({productprice:order})
             res.status(200).json(products)
         }
+    }
+    catch(error){
+        res.status(500).json({ message: error.message});
+    }
+}
+
+const getProducts_By_PriceRange =  async(req,res)=>{
+    try{
+
+        const item = req.query.item
+        const username = req.body.username
+        const startRange = req.body.startrange
+        const endRange = req.body.endrange
+
+        if(username!==null){
+            const products = await Product.aggregate([
+                {
+                    $match:{$text:{$search:item},productnewprice:{$gte:startRange,$lt:endRange}}
+                },
+                {
+                    $lookup:{
+                        from:'wishlists',
+                       let:{"id":"$_id"},
+                       pipeline:[
+                        {
+                            $match:{
+                                $expr:{$and:[{$eq:["$product_id","$$id"]},{username:req.params.username}]}
+                            }
+                        }
+                       ],
+                        as:'wishlisted'
+                    }
+                }
+            ])
+            res.status(200).json(products)
+        }
+        else{
+            const products = await Product.find({$text:{$search:item},productnewprice:{$gte:startRange,$lt:endRange}})
+            res.status(200).json(products)
+        }
+
+
     }
     catch(error){
         res.status(500).json({ message: error.message});
@@ -191,4 +236,4 @@ const updateProduct = async(req,res) =>{
     }
 }
 module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct,
-    getProductsByCategory,getProductsBy,searchProducts,getBestDeals};
+    getProductsByCategory,getProductsBy,searchProducts,getBestDeals,getProducts_By_PriceRange};
