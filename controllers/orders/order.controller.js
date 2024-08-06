@@ -193,6 +193,7 @@ const getStoreOrders = async(req,res)=>{
                     username:1,
                     quantity:1,
                     price:1,
+                    product_id:1,
                     'products.productimg':1,
                     'products.productname':1,
                 }
@@ -205,4 +206,48 @@ const getStoreOrders = async(req,res)=>{
     }
 }
 
-module.exports = {getStoreOrders,getOrders,updateOrder,addOrder,getCurrentOrders,updateBulkOrder,deleteBulkOrder}
+const getFullFilledOrders = async(req,res) =>{
+    try{
+        const key = req.body.type;
+        const store = req.body.storename;
+        const statuspath = `orderstatus.${key}.status`;
+
+        const orders = await Order.find({storename:store,[statuspath]:true})
+        if(!orders.length){
+            return res.status(204).json({message:"No FullFilled Orders as of yet"})
+        }
+        const completedOrders = await Order.aggregate([
+            {
+                $match:{storename:store,[statuspath]:true}
+            },
+            {
+                $lookup:{
+                    from:'products',
+                    localField:'product_id',
+                    foreignField:'_id',
+                    as:'products'
+                }
+            },
+            {
+                $unwind:'$products'
+            },
+            {
+                $project:{
+                    orderstatus:1,
+                    username:1,
+                    quantity:1,
+                    price:1,
+                    product_id:1,
+                    'products.productimg':1,
+                    'products.productname':1,
+                }
+            }
+        ])
+        return res.status(200).json(completedOrders)
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
+
+module.exports = {getStoreOrders,getOrders,updateOrder,addOrder,getCurrentOrders,updateBulkOrder,deleteBulkOrder,getFullFilledOrders}

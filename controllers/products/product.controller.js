@@ -235,5 +235,20 @@ const updateProduct = async(req,res) =>{
         res.status(500).json({message:error.message})
     }
 }
+
+const updateStock = async(req,res) =>{
+    try{
+        const quantity = req.body.quantity;
+        const product =  await Product.find({_id:req.body._id})
+        if(!product.length){
+            return res.status(500).json({message:"Product doesnt exist"})
+        }
+        const updateQuantity = await Product.updateOne({_id:req.body._id},{$inc:{productquantity:-quantity}})
+        res.status(200).json({message:"Product Quantity Updated"})
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
 module.exports = {addProduct,getProducts,getStoreProducts,deleteProduct,updateProduct,getSingleProduct,
-    getProductsByCategory,getProductsBy,searchProducts,getBestDeals,getProducts_By_PriceRange};
+    getProductsByCategory,getProductsBy,searchProducts,getBestDeals,getProducts_By_PriceRange,updateStock};
