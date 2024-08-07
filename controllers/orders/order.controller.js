@@ -4,14 +4,55 @@ const Product = require('../../models/product.model')
 //user
 const getOrders=async(req,res)=>{
     try{
-        const order = await Order.find({username:req.body.username})
+        const order = await Order.find({$and:[{username:req.body.username},{'orderstatus.delivered.status':'false'}]})
         if(!order.length){
             return res.status(204).json({message:"No running Orders"})
         }
 
         const orderedProducts =await Order.aggregate([   
             {
-                $match:{username:req.body.username}
+                $match:{username:req.body.username,'orderstatus.delivered.status':false}
+              },
+            {
+            $lookup:{
+                from:'products',
+                localField:'product_id',
+                foreignField:'_id',
+                as:'products'
+            }},
+            {
+                $unwind:'$products'
+            },
+            {
+                $project:{
+                    orderstatus:1,
+                    quantity:1,
+                    price:1,
+                    storename:1,
+                   'products.productname':1,
+                   'products.productimg':1,
+    
+                }
+            }
+        ])
+        
+        res.status(200).json(orderedProducts)
+
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
+const getPastOrders = async(req,res) =>{
+    try{
+        const order = await Order.find({$and:[{username:req.body.username},{'orderstatus.delivered.status':'true'}]})
+        if(!order.length){
+            return res.status(204).json({message:"No Past Orders"})
+        }
+
+        const orderedProducts =await Order.aggregate([   
+            {
+                $match:{username:req.body.username,'orderstatus.delivered.status':true}
               },
             {
             $lookup:{
@@ -253,4 +294,4 @@ const getFullFilledOrders = async(req,res) =>{
     }
 }
 
-module.exports = {getStoreOrders,getOrders,updateOrder,addOrder,getCurrentOrders,updateBulkOrder,deleteBulkOrder,getFullFilledOrders}
+module.exports = {getStoreOrders,getOrders,getPastOrders,updateOrder,addOrder,getCurrentOrders,updateBulkOrder,deleteBulkOrder,getFullFilledOrders}

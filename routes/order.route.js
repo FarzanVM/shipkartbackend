@@ -1,5 +1,5 @@
 const express = require("express");
-const {getStoreOrders,getOrders,updateOrder, addOrder, getCurrentOrders, updateBulkOrder, deleteBulkOrder, getFullFilledOrders} = require('../controllers/orders/order.controller')
+const {getStoreOrders,getOrders,updateOrder, addOrder, getCurrentOrders, updateBulkOrder, deleteBulkOrder, getFullFilledOrders, getPastOrders} = require('../controllers/orders/order.controller')
 const {checkAuth} = require('../middleware/check-authorization')
 
 const router = express.Router()
@@ -10,6 +10,8 @@ router.post('/addorder',checkAuth,addOrder)
 router.post('/updatebulkorders',checkAuth,updateBulkOrder)
 
 router.post('/getorders',checkAuth,getOrders)
+
+router.post('/getpastorders',checkAuth,getPastOrders)
 
 router.post('/getcurrentorders',checkAuth,getCurrentOrders)
 
