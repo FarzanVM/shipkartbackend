@@ -172,9 +172,12 @@ const getStoreOrders = async(req,res)=>{
            return res.status(204).json({message:"No Orders as of yet"})
         }
         
+        const key='delivered';
+        const statuspath=`orderstatus.${key}.status`;
+
         const storeOrders = await Order.aggregate([
             {
-                $match:{storename:req.body.storename}
+                $match:{storename:req.body.storename,[statuspath]:false}
             },
             {
                 $lookup:{
