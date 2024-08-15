@@ -70,6 +70,7 @@ const getPastOrders = async(req,res) =>{
                     quantity:1,
                     price:1,
                     storename:1,
+                    product_id:1,
                    'products.productname':1,
                    'products.productimg':1,
     

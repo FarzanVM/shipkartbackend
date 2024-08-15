@@ -8,6 +8,7 @@ const productRoute = require('./routes/product.route');
 const cartRoute = require('./routes/cart.route')
 const wishListRoute = require('./routes/wishlist.route');
 const orderRoute = require('./routes/order.route')
+const reviewRoute = require('./routes/review.route')
 
 app.use(cors())
 
@@ -27,6 +28,7 @@ app.use('/api/product',productRoute)
 app.use('/api/cart',cartRoute)
 app.use('/api/wishlist',wishListRoute)
 app.use('/api/order',orderRoute)
+app.use('/api/review',reviewRoute)
 
 mongoose.connect("mongodb+srv://farzanmohan:Vm5wPVmYgvfpaGuz@shipkartdb.usxzsgl.mongodb.net/shipKartAPI?retryWrites=true&w=majority&appName=shipkartDB")
 .then(()=>{
